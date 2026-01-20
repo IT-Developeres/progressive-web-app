@@ -1,4 +1,96 @@
-// Product Database
+// PWA Install Prompt
+let deferredPrompt;
+let isAppInstalled = false;
+
+// Check if app is already installed
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallButton();
+});
+
+window.addEventListener('appinstalled', () => {
+    console.log('PWA was installed');
+    isAppInstalled = true;
+    hideInstallButton();
+    showNotification('App installed successfully!');
+});
+
+// Check if app is in standalone mode (already installed)
+window.addEventListener('load', () => {
+    if (window.navigator.standalone === true) {
+        isAppInstalled = true;
+        hideInstallButton();
+    }
+    // Register Service Worker
+    registerServiceWorker();
+});
+
+// Show Install Button
+function showInstallButton() {
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) {
+        installBtn.style.display = 'flex';
+    }
+}
+
+// Hide Install Button
+function hideInstallButton() {
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) {
+        installBtn.style.display = 'none';
+    }
+}
+
+// Install App Function
+function installApp() {
+    if (!deferredPrompt) {
+        alert('App is already installed or not available for installation');
+        return;
+    }
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+            showNotification('Installing TechStore app...');
+        } else {
+            console.log('User dismissed the install prompt');
+        }
+        deferredPrompt = null;
+    });
+}
+
+// Register Service Worker
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+            .then((registration) => {
+                console.log('Service Worker registered successfully:', registration);
+                
+                // Check for updates periodically
+                setInterval(() => {
+                    registration.update();
+                }, 60000); // Check every minute
+            })
+            .catch((error) => {
+                console.log('Service Worker registration failed:', error);
+            });
+
+        // Handle service worker updates
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('Service Worker updated');
+        });
+
+        // Listen for messages from service worker
+        navigator.serviceWorker.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'CACHE_UPDATED') {
+                showNotification('App updated! Refresh to see changes.');
+            }
+        });
+    }
+}
+
+
 const products = [
     {
         id: 1,
