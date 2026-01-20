@@ -41,6 +41,18 @@
         </div>
     </header>
 
+    <div id="installBanner" class="install-banner" style="display:none;" role="dialog" aria-live="polite">
+        <div class="install-banner-content">
+            <i class="fas fa-store app-icon" aria-hidden="true"></i>
+            <div class="install-text">
+                <strong>TechStore</strong>
+                <div class="install-sub">Install the app for a better experience</div>
+            </div>
+            <button class="btn btn-primary" id="bannerInstallBtn" onclick="installApp()">Install</button>
+            <button class="install-close" aria-label="Dismiss" onclick="dismissInstallBanner()">&times;</button>
+        </div>
+    </div>
+
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="container">

@@ -7,6 +7,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     showInstallButton();
+    // show banner if not dismissed and not installed
+    if (!localStorage.getItem('installBannerDismissed')) {
+        showInstallBanner();
+    }
 });
 
 window.addEventListener('appinstalled', () => {
@@ -14,6 +18,9 @@ window.addEventListener('appinstalled', () => {
     isAppInstalled = true;
     hideInstallButton();
     showNotification('App installed successfully!');
+    // hide banner permanently after install
+    try { localStorage.setItem('installBannerDismissed', 'true'); } catch (e) {}
+    hideInstallBanner();
 });
 
 // Check if app is in standalone mode (already installed)
@@ -24,6 +31,10 @@ window.addEventListener('load', () => {
     }
     // Register Service Worker
     registerServiceWorker();
+    // If the banner was previously dismissed, ensure it's hidden
+    if (localStorage.getItem('installBannerDismissed')) {
+        hideInstallBanner();
+    }
 });
 
 // Show Install Button
@@ -32,6 +43,27 @@ function showInstallButton() {
     if (installBtn) {
         installBtn.style.display = 'flex';
     }
+}
+
+// Banner controls
+function showInstallBanner() {
+    const banner = document.getElementById('installBanner');
+    if (!banner) return;
+    banner.style.display = 'flex';
+    // small timeout to allow animation class
+    setTimeout(() => banner.classList.add('show'), 10);
+}
+
+function hideInstallBanner() {
+    const banner = document.getElementById('installBanner');
+    if (!banner) return;
+    banner.classList.remove('show');
+    setTimeout(() => { banner.style.display = 'none'; }, 220);
+}
+
+function dismissInstallBanner() {
+    try { localStorage.setItem('installBannerDismissed', 'true'); } catch (e) {}
+    hideInstallBanner();
 }
 
 // Hide Install Button
@@ -53,6 +85,9 @@ function installApp() {
         if (choiceResult.outcome === 'accepted') {
             console.log('User accepted the install prompt');
             showNotification('Installing TechStore app...');
+            // hide banner after user accepts
+            try { localStorage.setItem('installBannerDismissed', 'true'); } catch (e) {}
+            hideInstallBanner();
         } else {
             console.log('User dismissed the install prompt');
         }
