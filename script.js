@@ -100,7 +100,10 @@ function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js')
             .then((registration) => {
-                console.log('Service Worker registered successfully:', registration);
+                console.log('[App] Service Worker registered successfully:', registration);
+                
+                // Store registration globally for later use
+                window.swRegistration = registration;
                 
                 // Check for updates periodically
                 setInterval(() => {
@@ -113,14 +116,17 @@ function registerServiceWorker() {
                         registration.update();
                     }
                 });
+
+                // Get current cache version
+                getCacheVersion();
             })
             .catch((error) => {
-                console.log('Service Worker registration failed:', error);
+                console.log('[App] Service Worker registration failed:', error);
             });
 
         // Handle service worker updates
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-            console.log('Service Worker updated');
+            console.log('[App] Service Worker updated');
             showNotification('🔄 App updated! Refresh to see changes.', 5000);
         });
 
@@ -133,15 +139,51 @@ function registerServiceWorker() {
     }
 }
 
+// Get current cache version from Service Worker
+function getCacheVersion() {
+    if (navigator.serviceWorker.controller) {
+        const channel = new MessageChannel();
+        navigator.serviceWorker.controller.postMessage({
+            type: 'GET_CACHE_VERSION'
+        }, [channel.port2]);
+
+        channel.port1.onmessage = (event) => {
+            console.log('[App] Current cache version:', event.data.cacheVersion);
+            console.log('[App] Cache name:', event.data.cacheName);
+            // Store in sessionStorage to check updates
+            sessionStorage.setItem('appCacheVersion', event.data.cacheVersion);
+        };
+    }
+}
+
+// Clear cache manually
+function clearAppCache() {
+    if (navigator.serviceWorker.controller) {
+        const channel = new MessageChannel();
+        navigator.serviceWorker.controller.postMessage({
+            type: 'CLEAR_CACHE'
+        }, [channel.port2]);
+
+        channel.port1.onmessage = (event) => {
+            if (event.data.success) {
+                console.log('[App]', event.data.message);
+                showNotification('✅ Cache cleared! Please refresh the page.', 3000);
+            }
+        };
+    } else {
+        showNotification('⚠️ Service Worker not ready yet.', 3000);
+    }
+}
+
 // Offline/Online Detection
 window.addEventListener('online', () => {
-    console.log('App is online');
+    console.log('[App] App is now online');
     showNotification('✅ You are online', 3000);
     document.body.classList.remove('offline-mode');
 });
 
 window.addEventListener('offline', () => {
-    console.log('App is offline');
+    console.log('[App] App is now offline');
     showNotification('📡 You are offline - cached content only', 4000);
     document.body.classList.add('offline-mode');
 });
