@@ -1,5 +1,5 @@
 // Cache versioning strategy - Only update when you intentionally change this
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const CACHE_NAME = 'techstore-' + CACHE_VERSION;
 const DATA_CACHE = 'techstore-data-' + CACHE_VERSION;
 const IMAGE_CACHE = 'techstore-images-' + CACHE_VERSION;
@@ -11,6 +11,7 @@ const urlsToCache = [
   '/styles.css',
   '/script.js',
   '/manifest.json',
+  '/download.png',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
   'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap'
 ];
