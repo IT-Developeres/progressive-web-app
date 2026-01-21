@@ -1,13 +1,16 @@
 {
   "name": "TechStore - Premium Electronics",
   "short_name": "TechStore",
-  "description": "Your trusted destination for premium electronics and tech gadgets",
+  "description": "Your trusted destination for premium electronics and tech gadgets. Shop online and offline!",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#667eea",
   "background_color": "#ffffff",
+  "launch_handler": {
+    "client_mode": ["navigate-new", "auto"]
+  },
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23667eea' width='192' height='192'/><text x='50%' y='50%' font-size='80' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central' font-family='Arial'>TS</text></svg>",
@@ -20,6 +23,12 @@
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23667eea' width='192' height='192' rx='45'/><text x='50%' y='50%' font-size='80' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central' font-family='Arial'>TS</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ],
   "screenshots": [
@@ -28,9 +37,15 @@
       "sizes": "540x720",
       "type": "image/svg+xml",
       "form_factor": "narrow"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720'><rect fill='%23667eea' width='1280' height='720'/><text x='50%' y='50%' font-size='100' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central' font-family='Poppins'>TechStore</text></svg>",
+      "sizes": "1280x720",
+      "type": "image/svg+xml",
+      "form_factor": "wide"
     }
   ],
-  "categories": ["shopping", "lifestyle"],
+  "categories": ["shopping", "lifestyle", "productivity"],
   "shortcuts": [
     {
       "name": "Shop Products",
@@ -44,6 +59,24 @@
           "type": "image/svg+xml"
         }
       ]
+    },
+    {
+      "name": "View Cart",
+      "short_name": "Cart",
+      "description": "View your shopping cart",
+      "url": "/#cart",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect fill='%23667eea' width='96' height='96'/><path fill='white' d='M24 20h4l8 48h32l8-48h4v4h-4l-8 48h-32l-8-48h-4v-4zm12 52a4 4 0 100 8 4 4 0 000-8zm28 0a4 4 0 100 8 4 4 0 000-8z'/></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
     }
-  ]
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
 }

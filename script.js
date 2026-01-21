@@ -106,6 +106,13 @@ function registerServiceWorker() {
                 setInterval(() => {
                     registration.update();
                 }, 60000); // Check every minute
+
+                // Check for updates on visibility
+                document.addEventListener('visibilitychange', () => {
+                    if (!document.hidden) {
+                        registration.update();
+                    }
+                });
             })
             .catch((error) => {
                 console.log('Service Worker registration failed:', error);
@@ -114,6 +121,7 @@ function registerServiceWorker() {
         // Handle service worker updates
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             console.log('Service Worker updated');
+            showNotification('🔄 App updated! Refresh to see changes.', 5000);
         });
 
         // Listen for messages from service worker
@@ -124,6 +132,47 @@ function registerServiceWorker() {
         });
     }
 }
+
+// Offline/Online Detection
+window.addEventListener('online', () => {
+    console.log('App is online');
+    showNotification('✅ You are online', 3000);
+    document.body.classList.remove('offline-mode');
+});
+
+window.addEventListener('offline', () => {
+    console.log('App is offline');
+    showNotification('📡 You are offline - cached content only', 4000);
+    document.body.classList.add('offline-mode');
+});
+
+// Check initial online status
+document.addEventListener('DOMContentLoaded', () => {
+    if (!navigator.onLine) {
+        document.body.classList.add('offline-mode');
+        showNotification('📡 You are offline - cached content only', 4000);
+    }
+});
+
+// Function to show offline badge if offline
+function checkOnlineStatus() {
+    if (!navigator.onLine) {
+        const header = document.querySelector('.header');
+        if (header && !document.getElementById('offline-badge')) {
+            const badge = document.createElement('div');
+            badge.id = 'offline-badge';
+            badge.className = 'offline-badge';
+            badge.textContent = '📡 Offline Mode';
+            header.appendChild(badge);
+        }
+    } else {
+        const badge = document.getElementById('offline-badge');
+        if (badge) badge.remove();
+    }
+}
+
+// Update status periodically
+setInterval(checkOnlineStatus, 5000);
 
 
 const products = [
@@ -418,7 +467,7 @@ function handleContactSubmit(event) {
 }
 
 // Notification Function
-function showNotification(message) {
+function showNotification(message, duration = 2000) {
     const notification = document.createElement('div');
     notification.style.cssText = `
         position: fixed;
@@ -438,7 +487,7 @@ function showNotification(message) {
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease-out';
         setTimeout(() => notification.remove(), 300);
-    }, 2000);
+    }, duration);
 }
 
 // Add animation keyframes
